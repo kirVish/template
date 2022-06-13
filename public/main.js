@@ -51,7 +51,7 @@ async function toSearch(searchString) {
     let emptySearch = document.querySelector('.empty-search');
     if (emptySearch && tracks.length) {
         emptySearch.remove();
-    } else if (!emptySearch) {
+    } else if (!emptySearch && !tracks.length) {
         const emptySearchTemplate = document.querySelector('#empty-search-template');
         emptySearch = emptySearchTemplate.content.cloneNode(true);
         document.querySelector('.track-list-wrapper').appendChild(emptySearch);
