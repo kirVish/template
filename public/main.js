@@ -65,7 +65,7 @@ async function toSearch(searchString) {
  * @param {object[]} tracks 
  * @param {boolean} isSearch 
  */
-const createTrackList = (tracks, isSearch) => {
+const createTrackList = (tracks = [], isSearch) => {
     tracks.forEach((item) => {
         let track = item
         if (!isSearch) {

@@ -13,6 +13,6 @@ const scopes = [
 
 export const loginUrl = `${AuthEndPoint}?redirect_uri=${redirectUri}&client_id=${clienID}&response_type=token&scope=${scopes.join(
   "%20"
-)}`; //&show_dialog=true
+)}&show_dialog=true`;
 
 export const getTokenFromUrl = () => window.location.hash.match(/(?<=access_token=)[^]*?(?=&)/)?.[0]
