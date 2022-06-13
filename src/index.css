@@ -106,8 +106,8 @@
       overflow: hidden;
   }
 
-  .min-h-80 {
-    min-height: 80%;
+  .min-h-60 {
+    min-height: 60vh;
   }
    
   svg {
