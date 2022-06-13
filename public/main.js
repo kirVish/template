@@ -7,6 +7,7 @@ const playerPageTemplate = document.querySelector('#playerPageTemplate');
 const clonePlayerPage = playerPageTemplate.content.cloneNode(true);
 let trackList;
 
+// Если токен - есть, то запрашиваем данные и отрисовываем, если нет, то рисуем страницу авторицзации
 if (token) {
     root.appendChild(clonePlayerPage);
 
@@ -14,7 +15,6 @@ if (token) {
 
     const mainTab = document.querySelector('.main-tab');
     const searchTab = document.querySelector('.search-tab');
-    // const collectionTab = document.querySelector('.collection-tab');
     const logoutButton = document.querySelector('.logout-button');
 
     trackList = document.querySelector('#trackList');
@@ -48,11 +48,6 @@ if (token) {
         toggleTabClasses(searchTab);
     })
 
-    // collectionTab.addEventListener('click', () => {
-    //     removeSearch();
-    //     toggleTabClasses(collectionTab);
-    // })
-
     logoutButton.addEventListener('click', () => {
         resetToken();
     })
@@ -66,6 +61,9 @@ if (token) {
     loginButton.setAttribute('href', loginUrl);
 }
 
+/**
+ * Запрос и отрисовка чарта
+ */
 async function toTopList() {
     const topList = await getByCategories('toplists');
     trackList.innerHTML = '';
@@ -78,6 +76,11 @@ async function toTopList() {
     })
 }
 
+/**
+ * Поиск треков
+ * @param {string} searchString 
+ * @returns 
+ */
 async function toSearch(searchString) {
     // Сбрасываем предыдущий поиск
     trackList.innerHTML = '';
@@ -93,6 +96,11 @@ async function toSearch(searchString) {
     createTrackList(tracks, true);
 }   
 
+/**
+ * Отрисовка списка треков
+ * @param {object[]} tracks 
+ * @param {boolean} isSearch 
+ */
 const createTrackList = (tracks, isSearch) => {
     tracks.forEach((item) => {
         let track = item
