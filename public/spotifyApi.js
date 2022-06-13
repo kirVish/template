@@ -28,16 +28,20 @@ export const resetToken = () => {
  * @returns 
  */
 const fetchData = async (url) => {
-    const response = await fetch(url, {
-        headers: {
-            'Authorization': 'Bearer ' + token
-        },
-    })
-    if (response.status === TOKEN_EXPIRE_CODE) {
-        resetToken();
-        return;
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            },
+        })
+        if (response.status === TOKEN_EXPIRE_CODE) {
+            resetToken();
+            return;
+        }
+        return await response.json();
+    } catch (e) {
+        console.error(e);
     }
-    return await response.json();
 }
 
 /**
