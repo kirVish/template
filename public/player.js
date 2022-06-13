@@ -1,4 +1,4 @@
-const DURATION = 30;
+const DURATION = 30; // Длительность превью
 let isSubscribe = false;
 
 const getElements = () => {
@@ -16,6 +16,9 @@ const getElements = () => {
     }
 }
 
+/**
+ * Запуск/остановка аудио
+ */
 const togglePlaying = () => {
     const {audio, playButton} = getElements();
     const [pauseIcon, playIcon] = playButton.querySelectorAll('path');
@@ -30,6 +33,9 @@ const togglePlaying = () => {
     }
 }
 
+/**
+ * Добавляем обработчики на события в плеере
+ */
 const subscribe = () => {
     isSubscribe = true;
 
@@ -60,6 +66,10 @@ const subscribe = () => {
     })
 }
 
+/**
+ * Запуск аудио
+ * @param {object} param 
+ */
 export const play = ({src, preview, title, artist}) => {
     const {audio, img, playerTitle, playerAuthor} = getElements();
 
