@@ -149,7 +149,7 @@
                   </button>
               </div>
             </header>
-            <section class="track-list-wrapper px-6 grid gap-6 mb-8 min-h-80">
+            <section class="track-list-wrapper px-6 grid gap-6 mb-8">
               <div id="trackList" class="grid grid-cols-6 gap-4">
                 <!-- TrackList -->
               </div>
@@ -256,10 +256,12 @@
       </template>
 
       <template id="empty-search-template">
-        <div class="empty-search h-500 text-2xl h-full align-center text-center justify-center text-white">
-          Ничего не найдено
-          <br>
-          <span class="text-base text-gray-100"> Попробуйте изменить условия поиска</span>
+        <div class="empty-search min-h-60 text-2xl flex h-full items-center text-center justify-center text-white">
+          <div>
+            Ничего не найдено
+            <br>
+            <span class="text-base text-gray-100"> Попробуйте изменить условия поиска</span>
+          </div>
         </div>
       </template>
     </div>
