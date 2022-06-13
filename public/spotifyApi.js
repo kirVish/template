@@ -40,7 +40,7 @@ const fetchData = async (url) => {
         }
         return await response.json();
     } catch (e) {
-        console.error(e);
+        console.info(e?.message);
     }
 }
 
@@ -52,7 +52,7 @@ const fetchData = async (url) => {
 export async function getTracks(trackIds) {
     const url = _baseUri + '/tracks?' + trackIds.join(',');
     const {tracks} = await fetchData(url);
-    return tracks.items;
+    return tracks?.items || [];
 }
 
 /**
@@ -64,7 +64,7 @@ export async function getTracks(trackIds) {
 export async function getBySearch(search = '', type = 'album') {
     const url = `https://api.spotify.com/v1/search?q=${search}&type=${type}`
     const data = await fetchData(url);
-    return data[type + 's'].items;
+    return data?.[type + 's']?.items || [];
 }
 
 /**
@@ -75,7 +75,7 @@ export async function getBySearch(search = '', type = 'album') {
 export async function getByCategories(category) {
     const url = `https://api.spotify.com/v1/browse/categories/${category}/playlists`
     const data = await fetchData(url);
-    return data.playlists.items;
+    return data?.playlists?.items || [];
 }
 
 /**
@@ -86,5 +86,5 @@ export async function getByCategories(category) {
 export async function getByPlaylist(playlistId) {
     const url = `https://api.spotify.com/v1/playlists/${playlistId}`;
     const data = await fetchData(url);
-    return data.tracks.items;
+    return data?.tracks?.items || [];
 }
