@@ -105,6 +105,10 @@
     word-break: break-all;
       overflow: hidden;
   }
+
+  .min-h-80 {
+    min-height: 80%;
+  }
    
   svg {
     max-width: 500px;
