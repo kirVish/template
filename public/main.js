@@ -43,11 +43,18 @@ async function toSearch(searchString) {
     trackList.innerHTML = '';
     if (!searchString) return;
     
-    const tracks = await getBySearch(searchString, 'track');
+    let tracks = [];
+    if (searchString) {
+        tracks = await getBySearch(searchString, 'track');
+    } 
     
-    const emptySearch = document.querySelector('.empty-search');
+    let emptySearch = document.querySelector('.empty-search');
     if (emptySearch && tracks.length) {
         emptySearch.remove();
+    } else if (!emptySearch) {
+        const emptySearchTemplate = document.querySelector('#empty-search-template');
+        emptySearch = emptySearchTemplate.content.cloneNode(true);
+        document.querySelector('.track-list-wrapper').appendChild(emptySearch);
     }
 
     createTrackList(tracks, true);
