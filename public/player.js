@@ -81,8 +81,12 @@ export const play = ({src, preview, title, artist}) => {
         img.src = preview;
         playerTitle.innerText = title;
         playerAuthor.innerText = artist;
-        audio.src = src;
-        audio.volume = 0.3;
+        if (src) {
+            audio.src = src;
+        }
     }
-    togglePlaying();
+
+    if (src) {
+        togglePlaying();
+    }
 }

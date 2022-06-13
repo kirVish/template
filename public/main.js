@@ -9,49 +9,10 @@ let trackList;
 
 // Если токен - есть, то запрашиваем данные и отрисовываем, если нет, то рисуем страницу авторицзации
 if (token) {
-    root.appendChild(clonePlayerPage);
-
-    toTopList();
-
-    const mainTab = document.querySelector('.main-tab');
-    const searchTab = document.querySelector('.search-tab');
-    const logoutButton = document.querySelector('.logout-button');
-
     trackList = document.querySelector('#trackList');
-
-    const toggleTabClasses = (selectedTab) => {
-        [mainTab, searchTab].forEach(tab => {
-            tab.classList.remove('bg-gray-200', 'text-white');
-            tab.classList.add('text-gray-100', 'hover:text-white');
-        })
-
-        selectedTab.classList.add('bg-gray-200', 'text-white');
-        selectedTab.classList.remove('text-gray-100', 'hover:text-white');
-    }
-
-    mainTab.addEventListener('click', () => {
-        removeSearch();
-        toTopList();
-        toggleTabClasses(mainTab);
-    })
-
-    searchTab.addEventListener('click', () => {
-        addSearch();
-        toSearch();
-
-        let emptySearch = document.querySelector('.empty-search');
-        if (!emptySearch) {
-            const emptySearchTemplate = document.querySelector('#empty-search-template');
-            emptySearch = emptySearchTemplate.content.cloneNode(true);
-            document.querySelector('.track-list-wrapper').appendChild(emptySearch);
-        }
-        toggleTabClasses(searchTab);
-    })
-
-    logoutButton.addEventListener('click', () => {
-        resetToken();
-    })
-
+    root.appendChild(clonePlayerPage);
+    toTopList();
+    subscribe();
 } else {
     const loginPageTemplate = document.querySelector('#loginPageTemplate');
     const cloneLoginPage = loginPageTemplate.content.cloneNode(true);
@@ -70,10 +31,6 @@ async function toTopList() {
     const playlistId = topList[0].id;
     const tracks = await getByPlaylist(playlistId);
     createTrackList(tracks);
-    trackList.addEventListener('click', (event) => {
-        const data = event.target.closest('.track').dataset;
-        play(data);
-    })
 }
 
 /**
@@ -123,7 +80,9 @@ const createTrack = (track) => {
     const artist = track.artists?.[0]?.name || 'Unknown artist';
 
     const trackContainer = cloneTrack.querySelector('.track');
-    trackContainer.setAttribute('data-src', track.preview_url);
+    if (track.preview_url) {
+        trackContainer.setAttribute('data-src', track.preview_url);
+    }
     trackContainer.setAttribute('data-preview', img);
     trackContainer.setAttribute('data-title', track.name);
     trackContainer.setAttribute('data-artist', artist);
@@ -171,4 +130,62 @@ const removeSearch = () => {
     if (emptySearch) {
         emptySearch.remove();
     }
+}
+
+/**
+ * Подписка на события переключения по вкладкам и т.д.
+ */
+function subscribe() {
+    trackList = document.querySelector('#trackList');
+    const mainTab = document.querySelector('.main-tab');
+    const searchTab = document.querySelector('.search-tab');
+    const logoutButton = document.querySelector('.logout-button');
+
+    let currentTab = 'main';
+
+    const toggleTabClasses = (selectedTab) => {
+        [mainTab, searchTab].forEach(tab => {
+            tab.classList.remove('bg-gray-200', 'text-white');
+            tab.classList.add('text-gray-100', 'hover:text-white');
+        })
+
+        selectedTab.classList.add('bg-gray-200', 'text-white');
+        selectedTab.classList.remove('text-gray-100', 'hover:text-white');
+    }
+
+    mainTab.addEventListener('click', () => {
+        if (currentTab !== 'main') {
+            currentTab = 'main';
+            removeSearch();
+            toTopList();
+            toggleTabClasses(mainTab);
+        } 
+    })
+
+    searchTab.addEventListener('click', () => {
+        if (currentTab !== 'search') {
+            currentTab = 'search';
+            addSearch();
+            toSearch();
+
+            let emptySearch = document.querySelector('.empty-search');
+            if (!emptySearch) {
+                const emptySearchTemplate = document.querySelector('#empty-search-template');
+                emptySearch = emptySearchTemplate.content.cloneNode(true);
+                document.querySelector('.track-list-wrapper').appendChild(emptySearch);
+            }
+            toggleTabClasses(searchTab);
+        }
+    })
+
+    trackList.addEventListener('click', (event) => {
+        const data = event.target.closest('.track').dataset;
+        if (data) {
+            play(data);
+        }
+    })
+
+    logoutButton.addEventListener('click', () => {
+        resetToken();
+    })
 }
