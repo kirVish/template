@@ -1,8 +1,7 @@
-import { getTokenFromUrl } from './auth.js'
+import {_baseUri, SPOTIFY_TOKEN, TOKEN_EXPIRE_CODE} from '../consts';
 
-var _baseUri = 'https://api.spotify.com/v1';
-const SPOTIFY_TOKEN = 'spotifyToken';
-const TOKEN_EXPIRE_CODE = 401;
+const getTokenFromUrl = () =>
+        window.location.hash.match(/(?<=access_token=)[^]*?(?=&)/)?.[0];
 
 const access_token = getTokenFromUrl();
 if (access_token) {
