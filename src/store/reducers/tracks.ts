@@ -18,6 +18,9 @@ export default function tracksReduser(state: TracksState = initialState, action:
         case TracksActionTypes.FETCH_TRACKS_SUCCESS:
             return { ...state, tracks: [...action.payload] }
 
+        case TracksActionTypes.RESET_TRACKS:
+            return { ...state, tracks: [] }
+            
         default:
             return state;
     }

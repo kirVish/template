@@ -1,15 +1,20 @@
 import React, { FC } from 'react'
+import { CUR_TAB } from '../interfaces';
 
-interface IProps {}
+interface IProps {
+    handleMainTab: () => void;
+    handleSearchTab: () => void;
+    curTab: CUR_TAB;
+}
 
 /**
 * @author
 * @function @Sidebar
 **/
 
-export const Sidebar:FC<IProps> = (props) => {
-  return (
-    <>
+export const Sidebar:FC<IProps> = ({handleMainTab, handleSearchTab, curTab}) => {
+    return (
+        <>
         <div className="px-6 mb-6">
             <svg viewBox="0 0 1134 340" className="cursor-pointer w-auto h-10 text-white">
                 <title>Кирвиш</title>
@@ -20,7 +25,10 @@ export const Sidebar:FC<IProps> = (props) => {
             </svg>
         </div>
         <div className="px-2 mb-6">
-            <div className="main-tab cursor-pointer bg-gray-200 flex font-medium items-center px-4 py-2 rounded text-sm text-white">
+            <div
+                className={'main-tab cursor-pointer flex font-medium items-center px-4 py-2 rounded text-sm ' + (curTab === CUR_TAB.MAIN ? 'bg-gray-200 text-white' : 'text-gray-100 hover:text-white')}
+                onClick={handleMainTab}
+            >
                 <svg
                 className="h-6 mr-4"
                 viewBox="0 0 512 512"
@@ -35,7 +43,10 @@ export const Sidebar:FC<IProps> = (props) => {
                 </svg>
                 Главная
             </div>
-            <div className="search-tab cursor-pointer flex font-medium items-center px-4 py-2 rounded text-sm text-gray-100 hover:text-white">
+            <div
+                className={'main-tab cursor-pointer flex font-medium items-center px-4 py-2 rounded text-sm ' + (curTab === CUR_TAB.SEARCH ? 'bg-gray-200 text-white' : 'text-gray-100 hover:text-white')}
+                onClick={handleSearchTab}
+            >
                 <svg
                 className="h-6 mr-4"
                 viewBox="0 0 512 512"
@@ -84,6 +95,6 @@ export const Sidebar:FC<IProps> = (props) => {
                 </div>
             </div>
         </div>
-    </>
-   )
- }
+        </>
+    )
+}

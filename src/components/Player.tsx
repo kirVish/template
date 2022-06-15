@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useEffect, useMemo, useRef, useState, MouseEvent, MouseEventHandler, SyntheticEvent  } from 'react'
 import { useActions } from '../hooks/useActions';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 
@@ -13,8 +13,9 @@ const DEFAULT_DURATION = 30;
 
 export const Player:FC<IProps> = (props: IProps) => {
 
+  const {tracks} = useTypedSelector(state => state.tracks);
   const {track, playing} = useTypedSelector(state => state.player);
-  const {play, pause} = useActions();
+  const {play, pause, changeTrack} = useActions();
 
   const [curTime, setCurTime] = useState('0:00');
   const [timeLineWidth, setTimeLineWidth] = useState(0);
@@ -48,7 +49,28 @@ export const Player:FC<IProps> = (props: IProps) => {
       time = '0' + time;
     }
     setTimeLineWidth(curTime / (audio?.duration || DEFAULT_DURATION) * 100);
-    setCurTime(`0:${time}`)
+    setCurTime(`0:${time}`);
+    if (audio?.ended) {
+      pause();
+    }
+  }
+
+  const handleTimeLineWrapClick = ({target, nativeEvent}: MouseEvent<HTMLDivElement>) => {
+    const tg = target as HTMLDivElement;
+    const newTime = nativeEvent.offsetX / tg.clientWidth * (audio?.duration || DEFAULT_DURATION);
+    if (audio) {
+      audio.currentTime = newTime;
+      play();
+    }
+  }
+
+  const handlePrevNext = (toNext: boolean) => {
+    let index: number = tracks.findIndex(item => item.id === track?.id) || 0;
+    toNext ? index++ : index--; 
+    const newTrack = tracks[index];
+    if (newTrack) {
+      changeTrack(newTrack);
+    }
   }
 
   return (
@@ -74,7 +96,7 @@ export const Player:FC<IProps> = (props: IProps) => {
       </div>
       <div>
         <div className="flex items-center justify-center mb-3">
-          <button title="Функция временно недоступна" className="w-5 h-5 text-gray-100 mr-6">
+          <button onClick={() => handlePrevNext(false)} className="w-5 h-5 text-gray-100 mr-6">
             <svg
               className="fill-current"
               xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +121,7 @@ export const Player:FC<IProps> = (props: IProps) => {
               }
             </svg>
           </button>
-          <button title="Функция временно недоступна" className="w-5 h-5 text-gray-100 mr-6">
+          <button onClick={() => handlePrevNext(true)} className="w-5 h-5 text-gray-100 mr-6">
             <svg
               className="fill-current"
               xmlns="http://www.w3.org/2000/svg"
@@ -111,7 +133,10 @@ export const Player:FC<IProps> = (props: IProps) => {
         </div>
         <div className="flex items-center">
           <span className="start-time text-xs text-gray-100 font-light">{ curTime || '0:00' }</span>
-          <div className="time-wrapper cursor-pointer overflow-hidden relative flex-1 mx-2 rounded">
+          <div
+            className="time-wrapper cursor-pointer overflow-hidden relative flex-1 mx-2 rounded"
+            onClick={handleTimeLineWrapClick}
+          >
             <div className="border-b-4 border-gray-400 rounded"></div>
             <div
               className="time-line transform absolute inset-x-0 top-0 w-0 border-b-4 border-gray-100 rounded hover:border-green-200"

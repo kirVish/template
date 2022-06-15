@@ -1,25 +1,33 @@
 import { FC, useEffect } from 'react';
 import { useActions } from '../hooks/useActions';
 import { useTypedSelector } from '../hooks/useTypedSelector';
-import { ITrack } from '../interfaces';
+import { CUR_TAB, ITrack } from '../interfaces';
+import { EmptySearch } from './EmptySearch';
 import { Track } from './Track';
 
-interface IProps {}
+interface IProps {
+  curTab: CUR_TAB;
+}
+
 
 /**
 * @author
 * @function @TrackList
 **/
 
-export const TrackList:FC<IProps> = (props: IProps) => {
+export const TrackList:FC<IProps> = ({curTab}) => {
 
   const {tracks} = useTypedSelector(state => state.tracks);
   const {track: curTrack, playing} = useTypedSelector(state => state.player);
-  const {fetchTracks, changeTrack, play, pause} = useActions();
+  const {fetchTopTracks, resetTracks, changeTrack, play, pause} = useActions();
 
   useEffect(() => {
-    fetchTracks();
-  }, [])
+    if (curTab === CUR_TAB.MAIN) {
+      fetchTopTracks();
+    } else {
+      resetTracks();
+    }
+  }, [curTab])
 
   const handleTrackClick = (track: ITrack) => {
     if (curTrack?.id !== track.id) {
@@ -41,11 +49,10 @@ export const TrackList:FC<IProps> = (props: IProps) => {
                       onPress={() => handleTrackClick(track)}
                       {...track}
                     />
-          })
-          :
-          <div>Список пуст</div>
+          }) : <></>
         }
         </div>
+        { !tracks.length && curTab === CUR_TAB.SEARCH ? <EmptySearch /> : <></> }
     </section>
    )
  }

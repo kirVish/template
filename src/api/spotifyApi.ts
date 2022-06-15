@@ -26,7 +26,7 @@ export const resetToken = () => {
  * @param {string} url 
  * @returns 
  */
-const fetchData = async (url) => {
+const fetchData = async (url: string) => {
     try {
         const response = await fetch(url, {
             headers: {
@@ -39,7 +39,7 @@ const fetchData = async (url) => {
         }
         return await response.json();
     } catch (e) {
-        console.info(e?.message);
+        console.info((e as Error)?.message);
     }
 }
 
@@ -48,7 +48,7 @@ const fetchData = async (url) => {
  * @param {string[]} trackIds 
  * @returns 
  */
-export async function getTracks(trackIds) {
+export async function getTracks(trackIds: string[]) {
     const url = _baseUri + '/tracks?' + trackIds.join(',');
     const {tracks} = await fetchData(url);
     return tracks?.items || [];
@@ -71,7 +71,7 @@ export async function getBySearch(search = '', type = 'album') {
  * @param {string} category 
  * @returns 
  */
-export async function getByCategories(category) {
+export async function getByCategories(category: string) {
     const url = `https://api.spotify.com/v1/browse/categories/${category}/playlists`
     const data = await fetchData(url);
     return data?.playlists?.items || [];
@@ -82,7 +82,7 @@ export async function getByCategories(category) {
  * @param {string} playlistId 
  * @returns 
  */
-export async function getByPlaylist(playlistId) {
+export async function getByPlaylist(playlistId: string) {
     const url = `https://api.spotify.com/v1/playlists/${playlistId}`;
     const data = await fetchData(url);
     return data?.tracks?.items || [];

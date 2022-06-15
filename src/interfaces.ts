@@ -28,3 +28,8 @@ export interface ITrack {
     },
     isPlaying?: boolean;
 }
+
+export enum CUR_TAB {
+    MAIN,
+    SEARCH
+}
