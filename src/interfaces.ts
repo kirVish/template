@@ -9,6 +9,14 @@ interface IImage {
     width: number;
 }
 
+export interface ITopTrack {
+    preview_url?: string;
+    name?: string;
+    href?: string;
+    isPlaying?: boolean;
+    track: ITrack;
+}
+
 export interface ITrack {
     id: string;
     name?: string;

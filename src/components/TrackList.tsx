@@ -1,46 +1,32 @@
-import React, { FC, useEffect, useState } from 'react'
-import { getByCategories, getByPlaylist } from '../api/spotifyApi';
-import { TOP_LIST } from '../consts';
+import { FC, useEffect } from 'react';
+import { useActions } from '../hooks/useActions';
+import { useTypedSelector } from '../hooks/useTypedSelector';
 import { ITrack } from '../interfaces';
 import { Track } from './Track';
 
-interface ITopTrack {
-  track: ITrack;
-}
-
-type ILoadTrack = ITrack & ITopTrack;
-
-interface IProps {
-  isSearch?: boolean;
-  onTrackClick: (track: ITrack) => void;
-  curTrack?: ITrack;
-}
+interface IProps {}
 
 /**
 * @author
 * @function @TrackList
 **/
 
-export const TrackList:FC<IProps> = ({isSearch, curTrack, onTrackClick}) => {
+export const TrackList:FC<IProps> = (props: IProps) => {
 
-  const [tracks, setTracks] = useState<ILoadTrack[]>([]);
-
-  const filterTracks = (data: ILoadTrack[]) => data.filter(item => {
-    const track = isSearch ? item : item.track;
-    return !!track.preview_url;
-  }) 
+  const {tracks} = useTypedSelector(state => state.tracks);
+  const {track: curTrack, playing} = useTypedSelector(state => state.player);
+  const {fetchTracks, changeTrack, play, pause} = useActions();
 
   useEffect(() => {
-    (async function() {
-      const topList = await getByCategories(TOP_LIST);
-      const playlistId = topList[0].id;
-      const data = await getByPlaylist(playlistId);
-      setTracks(() => filterTracks(data));
-    })()
+    fetchTracks();
   }, [])
 
   const handleTrackClick = (track: ITrack) => {
-    onTrackClick(track);
+    if (curTrack?.id !== track.id) {
+      changeTrack(track);
+    } else {
+      playing ? pause() : play();
+    }
   }
 
   return (
@@ -48,11 +34,10 @@ export const TrackList:FC<IProps> = ({isSearch, curTrack, onTrackClick}) => {
         <div id="trackList" className="grid grid-cols-6 gap-4">
         {
           tracks.length ?
-          tracks.filter((item) => item.track.preview_url).map(item => {
-            const track = isSearch ? item : item.track;
+          tracks.map(track => {
             return <Track
                       key={track.id}
-                      isPlaying={track.id === curTrack?.id}
+                      isPlaying={curTrack?.id === track?.id && playing}
                       onPress={() => handleTrackClick(track)}
                       {...track}
                     />

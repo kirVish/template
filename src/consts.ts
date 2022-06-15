@@ -23,5 +23,5 @@ export const loginUrl = `${authEndPoint}?redirect_uri=${redirectUri}&client_id=$
 export const TOP_LIST = 'toplists'
 
 export const plugTrack: ITrack = {
-    id: '0'
+  id: '0'
 } 

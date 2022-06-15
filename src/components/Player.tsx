@@ -1,44 +1,74 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
-import { ITrack } from '../interfaces';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import { useActions } from '../hooks/useActions';
+import { useTypedSelector } from '../hooks/useTypedSelector';
 
-interface IProps extends ITrack {
-  onPlayPause: () => void;
-}
+interface IProps {}
+
+const DEFAULT_DURATION = 30;
 
 /**
 * @author
 * @function @Player
 **/
 
-export const Player:FC<IProps> = ({id, isPlaying, name, album, preview_url, onPlayPause}) => {
+export const Player:FC<IProps> = (props: IProps) => {
+
+  const {track, playing} = useTypedSelector(state => state.player);
+  const {play, pause} = useActions();
+
+  const [curTime, setCurTime] = useState('0:00');
+  const [timeLineWidth, setTimeLineWidth] = useState(0);
 
   const audioEl = useRef<HTMLAudioElement>(null);
   const audio = audioEl.current;
   if (audio) audio.volume = 0.05; // FIXME Удалить
 
   const togglePlaying = () => {
-    if (audio?.paused) {
+    audio?.paused ? play() : pause(); // По клику на кнопку сначала попадаем сюда, а потом в useEffect
+  }
+
+  useEffect(() => {
+    audio?.play()
+  }, [track.id])
+
+  useEffect(() => {
+    if (playing) {
       audio?.play();
     } else {
       audio?.pause();
     }
-  }
+  }, [playing])
 
-  useEffect(() => {
-    togglePlaying();
-  }, [id, isPlaying])
+  const duration = useMemo(() => `0:${parseInt('' + (audio?.duration || DEFAULT_DURATION))}`, [track.id]);
+
+  const handleAudioTime = () => {
+    const curTime = audio?.currentTime || 0;
+    let time: string = '' + parseInt('' + audio?.currentTime);
+    if (time.length !== 2) {
+      time = '0' + time;
+    }
+    setTimeLineWidth(curTime / (audio?.duration || DEFAULT_DURATION) * 100);
+    setCurTime(`0:${time}`)
+  }
 
   return (
     <>
-      <audio ref={audioEl} className="hidden" controls src={preview_url} id="audio"></audio>
+      <audio
+        ref={audioEl}
+        className="hidden"
+        controls
+        src={track.preview_url}
+        id="audio"
+        onTimeUpdate={handleAudioTime}
+      ></audio>
       <div className="flex items-center">
-        <img className="h-14 w-14 mr-4 flex-shrink-0" src={album?.images?.[0].url || 'https://picsum.photos/56.webp?random=10'} alt=""/>
+        <img className="h-14 w-14 mr-4 flex-shrink-0" src={track?.album?.images?.[0].url || 'https://picsum.photos/56.webp?random=10'} alt=""/>
         <div className="mr-4">
           <div className="player-title text-sm text-white text-line-clamp-1 font-light">
-            {name || 'Неизвестно'}
+            {track?.name || 'Неизвестно'}
           </div>
           <div className="text-xs text-gray-100 text-line-clamp-1">
-            <span className="player-author">{album?.artists?.[0].name || 'Неизвестный'}</span>
+            <span className="player-author">{track?.album?.artists?.[0].name || 'Неизвестный'}</span>
           </div>
         </div>
       </div>
@@ -55,7 +85,7 @@ export const Player:FC<IProps> = ({id, isPlaying, name, album, preview_url, onPl
           </button>
           <button
             className="play-button w-8 h-8 border border-gray-300 rounded-full flex text-gray-100 mr-6"
-            onClick={onPlayPause}
+            onClick={togglePlaying}
           >
             <svg
               className="fill-current h-5 w-5 m-auto"
@@ -63,7 +93,7 @@ export const Player:FC<IProps> = ({id, isPlaying, name, album, preview_url, onPl
               viewBox="0 0 20 20"
             >
               {
-                isPlaying ?
+                playing ?
                   <path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z" /> :
                   <path d="M15 10.001c0 .299-.305.514-.305.514l-8.561 5.303C5.51 16.227 5 15.924 5 15.149V4.852c0-.777.51-1.078 1.135-.67l8.561 5.305c-.001 0 .304.215.304.514z"/>
               }
@@ -80,14 +110,15 @@ export const Player:FC<IProps> = ({id, isPlaying, name, album, preview_url, onPl
           </button>
         </div>
         <div className="flex items-center">
-          <span className="start-time text-xs text-gray-100 font-light">0:00</span>
+          <span className="start-time text-xs text-gray-100 font-light">{ curTime || '0:00' }</span>
           <div className="time-wrapper cursor-pointer overflow-hidden relative flex-1 mx-2 rounded">
             <div className="border-b-4 border-gray-400 rounded"></div>
             <div
               className="time-line transform absolute inset-x-0 top-0 w-0 border-b-4 border-gray-100 rounded hover:border-green-200"
+              style={{width: timeLineWidth + '%'}}
             ></div>
           </div>
-          <span className="end-time text-xs text-gray-100 font-light">0:00</span>
+          <span className="end-time text-xs text-gray-100 font-light">{ duration || '0:00' }</span>
         </div>
       </div>
     </>
