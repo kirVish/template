@@ -3,6 +3,7 @@ import { ITrack } from '../interfaces';
 
 interface IProps extends ITrack {
   onPress: () => void;
+  isPlaying: boolean;
 }
 
 /**

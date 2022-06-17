@@ -12,11 +12,7 @@ interface IImage {
 /**
  * Формат данных при запросе треков из чарта
  */
-export interface ITopTrack {
-    preview_url?: string;
-    name?: string;
-    href?: string;
-    isPlaying?: boolean;
+export interface ITopTrack extends ITrack {
     track: ITrack;
 }
 
@@ -31,8 +27,7 @@ export interface ITrack {
     album?: {
         images?: IImage[];
         artists?: IArtist[];
-    },
-    isPlaying?: boolean;
+    }
 }
 
 export enum CUR_TAB {
