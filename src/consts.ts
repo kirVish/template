@@ -20,7 +20,7 @@ export const loginUrl = `${authEndPoint}?redirect_uri=${redirectUri}&client_id=$
   "%20"
 )}&show_dialog=true`;
 
-export const TOP_LIST = 'toplists'
+export const TOP_LIST = 'toplists';
 
 export const plugTrack: ITrack = {
   id: '0'

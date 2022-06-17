@@ -1,8 +1,6 @@
-import React, { FC, useEffect, useMemo, useRef, useState, MouseEvent, MouseEventHandler, SyntheticEvent  } from 'react'
+import React, { FC, useEffect, useMemo, useRef, useState, MouseEvent } from 'react'
 import { useActions } from '../hooks/useActions';
 import { useTypedSelector } from '../hooks/useTypedSelector';
-
-interface IProps {}
 
 const DEFAULT_DURATION = 30;
 
@@ -11,7 +9,7 @@ const DEFAULT_DURATION = 30;
 * @function @Player
 **/
 
-export const Player:FC<IProps> = (props: IProps) => {
+export const Player:FC = () => {
 
   const {tracks} = useTypedSelector(state => state.tracks);
   const {track, playing} = useTypedSelector(state => state.player);
@@ -19,10 +17,10 @@ export const Player:FC<IProps> = (props: IProps) => {
 
   const [curTime, setCurTime] = useState('0:00');
   const [timeLineWidth, setTimeLineWidth] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   const audioEl = useRef<HTMLAudioElement>(null);
   const audio = audioEl.current;
-  if (audio) audio.volume = 0.05; // FIXME Удалить
 
   const togglePlaying = () => {
     audio?.paused ? play() : pause(); // По клику на кнопку сначала попадаем сюда, а потом в useEffect
@@ -40,7 +38,10 @@ export const Player:FC<IProps> = (props: IProps) => {
     }
   }, [playing])
 
-  const duration = useMemo(() => `0:${parseInt('' + (audio?.duration || DEFAULT_DURATION))}`, [track.id]);
+  const handleAudioLoad = () => {
+    const duration = audio?.duration ?? DEFAULT_DURATION;
+    setDuration(parseInt('' + duration));
+  }
 
   const handleAudioTime = () => {
     const curTime = audio?.currentTime || 0;
@@ -65,7 +66,7 @@ export const Player:FC<IProps> = (props: IProps) => {
   }
 
   const handlePrevNext = (toNext: boolean) => {
-    let index: number = tracks.findIndex(item => item.id === track?.id) || 0;
+    let index: number = tracks.findIndex(item => item.id === track?.id);
     toNext ? index++ : index--; 
     const newTrack = tracks[index];
     if (newTrack) {
@@ -82,6 +83,7 @@ export const Player:FC<IProps> = (props: IProps) => {
         src={track.preview_url}
         id="audio"
         onTimeUpdate={handleAudioTime}
+        onLoadedData={handleAudioLoad}
       ></audio>
       <div className="flex items-center">
         <img className="h-14 w-14 mr-4 flex-shrink-0" src={track?.album?.images?.[0].url || 'https://picsum.photos/56.webp?random=10'} alt=""/>
@@ -143,7 +145,7 @@ export const Player:FC<IProps> = (props: IProps) => {
               style={{width: timeLineWidth + '%'}}
             ></div>
           </div>
-          <span className="end-time text-xs text-gray-100 font-light">{ duration || '0:00' }</span>
+          <span className="end-time text-xs text-gray-100 font-light">{ duration ? '0:' + duration : '0:00' }</span>
         </div>
       </div>
     </>

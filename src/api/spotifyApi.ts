@@ -1,18 +1,5 @@
 import {_baseUri, SPOTIFY_TOKEN, TOKEN_EXPIRE_CODE} from '../consts';
 
-const getTokenFromUrl = () =>
-        window.location.hash.match(/(?<=access_token=)[^]*?(?=&)/)?.[0];
-
-const access_token = getTokenFromUrl();
-if (access_token) {
-    // Обновим токен
-    localStorage.setItem(SPOTIFY_TOKEN, access_token);
-    window.location.hash = '';
-}
-
-// Получим токкен из hash или из localStorage
-export const token = localStorage.getItem(SPOTIFY_TOKEN);
-
 /**
  * Сброс токена и переход на страницу авторизации Spotify
  */
@@ -28,6 +15,9 @@ export const resetToken = () => {
  */
 const fetchData = async (url: string) => {
     try {
+        // Получим токкен из hash или из localStorage
+        const token = localStorage.getItem(SPOTIFY_TOKEN);
+
         const response = await fetch(url, {
             headers: {
                 'Authorization': 'Bearer ' + token

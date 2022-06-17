@@ -5,14 +5,12 @@ import { Sidebar } from '../components/Sidebar'
 import { TrackList } from '../components/TrackList'
 import { CUR_TAB } from '../interfaces'
 
-interface IProps {}
-
 /**
 * @author
 * @function @MainPage
 **/
 
-export const MainPage:FC<IProps> = (props) => {
+export const MainPage:FC = (props) => {
 
   const [curTab, setCurTab] = useState(CUR_TAB.MAIN);
   

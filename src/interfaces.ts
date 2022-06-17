@@ -9,6 +9,9 @@ interface IImage {
     width: number;
 }
 
+/**
+ * Формат данных при запросе треков из чарта
+ */
 export interface ITopTrack {
     preview_url?: string;
     name?: string;
@@ -17,6 +20,9 @@ export interface ITopTrack {
     track: ITrack;
 }
 
+/**
+ * Формат данных при запросе треков поиском
+ */
 export interface ITrack {
     id: string;
     name?: string;

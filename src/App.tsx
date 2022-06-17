@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { SPOTIFY_TOKEN } from './consts';
 import { AuthPage } from './pages/AuthPage';
 import { MainPage } from './pages/MainPage';
 
 function App() {
-    const [token, setToken] = useState('');
-    
     const getTokenFromUrl = () =>
         window.location.hash.match(/(?<=access_token=)[^]*?(?=&)/)?.[0]
 
-    useEffect(() => {
-        const SPOTIFY_TOKEN = 'spotifyToken';
-
+    const getToken = () => {
         const access_token = getTokenFromUrl();
         if (access_token) {
             // Обновим токен
@@ -19,11 +16,10 @@ function App() {
         }
 
         // Получим токкен из hash или из localStorage
-        const tk = localStorage.getItem(SPOTIFY_TOKEN);
-        if (tk) {
-            setToken(tk);
-        }
-    }, []);
+        return localStorage.getItem(SPOTIFY_TOKEN);
+    }
+
+    const [token] = useState(getToken);
 
     return (
         token ?

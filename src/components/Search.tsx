@@ -1,14 +1,12 @@
 import React, { ChangeEvent, FC } from 'react'
 import { useActions } from '../hooks/useActions'
 
-interface IProps {}
-
 /**
 * @author
 * @function @Search
 **/
 
-export const Search:FC<IProps> = (props) => {
+export const Search:FC = () => {
 
   const {fetchSearchTracks} = useActions();
 
